@@ -31,9 +31,6 @@ module.exports = {
       }
     ]
   },
-  headers: {
-    "Access-Control-Allow-Origin": "*"
-},
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
