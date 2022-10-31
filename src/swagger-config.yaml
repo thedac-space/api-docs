@@ -1,1245 +1,1063 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
-  version: "0.0.1"
-  title: "Metagamehub DAO Valuation API"
-  description: "The Metagamehub DAO Valuation API provides you fair prices for NFTs, use our API to empower your apps."
+  version: 1.0.0
+  title: Metagamehub DAO Valuation API
+  description: The Metagamehub DAO Valuation API provides you fair prices for NFTs, use our API to empower your apps.
   contact:
     email: camilo.alaguna@itrmachines.com
-  
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-
 tags:
-- name: Sandbox
-  description: API requests for getting land valuations for Sandbox
-- name: Decentraland
-  description: API requests for getting land valuations for Decentraland
+  - name: Sandbox
+    description: API requests for getting land valuations for Sandbox
+  - name: Decentraland
+    description: API requests for getting land valuations for Decentraland
+  - name: Fluf
+    description: API requests for getting token valuations for Fluf
+  - name: Somniun Space
+    description: API requests for getting land valuations for Somniun
+
+servers:
+  - url: https://services.itrmachines.com
 
 paths:
-  /sandbox/predict:
+  /test/sandbox/map:
     get:
       tags:
       - Sandbox
-      summary: Get land valuation and some basic details
-      operationId: sandboxPredict
-      description: Get land valuation and some basic details using the land's tokenId or its x and y coordinates. Use it to get valuations fast on your app.
-      produces:
-      - application/json
       parameters:
       - in: query
         name: tokenId
-        description: pass the land's tokenId for valuating your Land (optional)
+        schema:
+          type: integer
         required: false
-        type: string
+        description: pass the land's tokenId for valuating your Land (optional)
       - in: query
         name: x
+        schema:
+          type: integer
+        required: false
         description: x coordinate of the land, require the y parameter too (optional)
-        type: integer
-        minimum: -204
-        maximum: 204
-        required: false
       - in: query
-        name: "y"
+        name: y
+        schema:
+          type: integer
+        required: false
         description: y coordinate of the land, require the x parameter too (optional)
-        type: integer
-        minimum: -204
-        maximum: 204
+      - in: query
+        name: from
+        schema:
+          type: integer
         required: false
+        description: pass the initial token from a list, require size (optional)
+      - in: query
+        name: size
+        schema:
+          type: integer
+        required: false
+        description: "pass how many lands are going to be requested (Limits: 2000 when reduced is true, 5000 othercase) (optional)"
+      - in: query
+        name: reduced
+        schema:
+          type: boolean
+        required: false
+        description: if true give less information about each token (optional)
+      description: Get lands along their details and valuations        
       responses:
-        200:
-          description: Land valuation and details, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/sandbox-predict-result'
-        400:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+                    example: 45
+                  name:
+                    type: string
+                    example: LAND (-159, -204)
+                  images:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: https://img.seadn.io/files/d53cc5cfa5702c7d347fa9f19503e7d6.jpg?h=1024&w=1024&auto=format
+                      image_thumbnail_url:
+                        type: string
+                        example: https://img.seadn.io/files/d53cc5cfa5702c7d347fa9f19503e7d6.jpg?h=250&w=250&auto=format
+                      image_original_url:
+                        type: string
+                        example: https://img.seadn.io/files/d53cc5cfa5702c7d347fa9f19503e7d6.jpg?h=128&w=128&auto=format
+                      image_preview_url:
+                        type: string
+                        example: https://api.sandbox.game/lands/afc9cb8b-c281-46ad-b1ba-ebfd1cce3de0/v2/preview-500px-x-500px.jpg
+                  opensea_link:
+                    type: string
+                    example: https://opensea.io/assets/ethereum/0x5cc5b05a8a13e3fbdb0bb9fccd98d38e50f90c38/45
+                  external_link:
+                    type: string
+                    example: https://www.sandbox.game/en/lands/afc9cb8b-c281-46ad-b1ba-ebfd1cce3de0/
+                  token_metadata:
+                    type: string
+                    example: https://api.sandbox.game/lands/45/metadata.json
+                  predicted_price:
+                    type: integer
+                    example: 2.1985602407860347
+                  eth_predicted_price:
+                    type: integer
+                    example: 2.363476837696573
+                  floor_adjusted_predicted_price:
+                    type: integer
+                    example: 2.363476837696573
+                  coords:
+                    type: object
+                    properties:
+                      x:
+                        type: integer
+                        example: -159
+                      y:
+                        type: integer
+                        example: -204
+                  land_type:
+                    type: string
+                    example: Premium
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: integer
+                          example: 1641616142000
+                        time:
+                          type: string
+                          example: 2022-01-08 04:29:02
+                        hash:
+                          type: string
+                          example: 0x7437ecf20cffbcd1a58575e5b3c4376914bb9a6075e9ad8920f8872e96922d9c
+                        action:
+                          type: string
+                          example: Bought
+                        price:
+                          example: 0.25
+                        eth_price:
+                          example: 0.25  
+                        symbol:
+                          type: string
+                          example: ETH
+                        buyer:
+                          type: string
+                          example: 0x22742924e60a32736307138f6c4b79a11296932e
+                        market:
+                          type: string
+                          example: OpenSea
+                  variation_last_week:
+                    example: 0
+                  variation_last_four_weeks:
+                    example: 0
+                  variation_last_six_months:
+                    example: 0
+        '400':
           description: Land was not found
-  /decentraland/predict:
-    get:
-      tags:
-      - Decentraland
-      summary: Get land valuation and some basic details
-      operationId: decentralandPredict
-      description: Get land valuation and some basic details using the land's tokenId or its x and y coordinates. Use it to get valuations fast on your app.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: tokenId
-        description: pass the land's tokenId for valuating your Land (optional)
-        required: false
-        type: string
-      - in: query
-        name: x
-        description: x coordinate of the land, require the y parameter too (optional)
-        type: integer
-        minimum: -150
-        maximum: 150
-        required: false
-      - in: query
-        name: "y"
-        description: y coordinate of the land, require the x parameter too (optional)
-        type: integer
-        minimum: -150
-        maximum: 150
-        required: false
-      responses:
-        200:
-          description: Land valuation and details, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/decentraland-predict-result'
-        400:
-          description: Land was not found
-  /sandbox/predictDetailed:
+  /test/sandbox/globalData:
     get:
       tags:
       - Sandbox
-      summary: Get land valuation and advanced details
-      operationId: sandboxPredictDetailed
-      description: Get land valuation and some advance details from Opensea using the land's tokenId or its x and y coordinates. Use it to get advance details of lands on your valuations.
-      produces:
-      - application/json
+      description: Get the global data of Sandbox lands collection            
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  one_hour_volume:
+                    type: integer
+                    example: 0
+                  one_hour_change:
+                    type: integer
+                    example: 0
+                  one_hour_sales:
+                    type: integer
+                    example: 0
+                  one_hour_sales_change:
+                    type: integer
+                    example: 0
+                  one_hour_average_price:
+                    type: integer
+                    example: 0
+                  one_hour_difference:
+                    type: integer
+                    example: 0
+                  six_hour_volume:
+                    type: integer
+                    example: 7.27
+                  six_hour_change:
+                    type: integer
+                    example: 0.2552229013432783
+                  six_hour_sales:
+                    type: integer
+                    example: 4
+                  six_hour_sales_change:
+                    type: integer
+                    example: 0
+                  six_hour_average_price:
+                    type: integer
+                    example: 1.8175
+                  six_hour_difference:
+                    type: integer
+                    example: 1.4781999999999993
+                  one_day_volume:
+                    type: integer
+                    example: 24.882800000000007
+                  one_day_change:
+                    type: integer
+                    example: -0.2589331983202785
+                  one_day_sales:
+                    type: integer
+                    example: 17
+                  one_day_sales_change:
+                    type: integer
+                    example: 0.21428571428571427
+                  one_day_average_price:
+                    type: integer
+                    example: 1.4636941176470593
+                  one_day_difference:
+                    type: integer
+                    example: -8.694199999999991
+                  seven_day_volume:
+                    type: integer
+                    example: 283.5078900000002
+                  seven_day_change:
+                    type: integer
+                    example: -0.09764799883751953
+                  seven_day_sales:
+                    type: integer
+                    example: 141
+                  seven_day_average_price:
+                    type: integer
+                    example: 2.0106942553191502
+                  seven_day_difference:
+                    type: integer
+                    example: -30.67979909999974
+                  thirty_day_volume:
+                    type: integer
+                    example: 1567.7507129232447
+                  thirty_day_change:
+                    type: integer
+                    example: -0.15426628920265065
+                  thirty_day_sales:
+                    type: integer
+                    example: 838
+                  thirty_day_average_price:
+                    type: integer
+                    example: 1.8708242397652084
+                  thirty_day_difference:
+                    type: integer
+                    example: -285.9659982684907
+                  total_volume:
+                    type: integer
+                    example: 159175.98232805321
+                  total_sales:
+                    type: integer
+                    example: 92808
+                  total_supply:
+                    type: integer
+                    example: 164188
+                  count:
+                    type: integer
+                    example: 164188
+                  num_owners:
+                    type: integer
+                    example: 22022
+                  average_price:
+                    type: integer
+                    example: 1.715110575899203
+                  num_reports:
+                    type: integer
+                    example: 5
+                  market_cap:
+                    type: integer
+                    example: 330131.86839234066
+                  floor_price:
+                    type: integer
+                    example: 1.3
+                    
+  /test/decentraland/map:
+    get:
+      tags:
+      - Decentraland
       parameters:
       - in: query
         name: tokenId
-        description: pass the land's tokenId for valuating your Land (optional)
+        schema:
+          type: integer
         required: false
-        type: string
+        description: pass the land's tokenId for valuating your Land (optional)
       - in: query
         name: x
+        schema:
+          type: integer
+        required: false
         description: x coordinate of the land, require the y parameter too (optional)
-        type: integer
-        minimum: -204
-        maximum: 204
-        required: false
       - in: query
-        name: "y"
-        description: y coordinate of the land, require the x parameter too (optional)
-        type: integer
-        minimum: -204
-        maximum: 204
+        name: y
+        schema:
+          type: integer
         required: false
+        description: y coordinate of the land, require the x parameter too (optional)
+      - in: query
+        name: from
+        schema:
+          type: integer
+        required: false
+        description: pass the initial token from a list, require size (optional)
+      - in: query
+        name: size
+        schema:
+          type: integer
+        required: false
+        description: "pass how many lands are going to be requested (Limits: 2000 when reduced is true, 5000 othercase) (optional)"
+      - in: query
+        name: reduced
+        schema:
+          type: boolean
+        required: false
+        description: if true give less information about each token (optional)
+      description: Get lands along their details and valuations        
       responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/sandbox-predict-detailed-result'
-        400:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+                    example: 115792089237316195423570985008687907848846313895668364014433714111300142890917
+                  name:
+                    type: string
+                    example: Parcel -14,-91
+                  images:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/1Q7tiWTv_nKRpHgsG1iATDVdp-eKIZuycQMKD9aIWXMNp96WNgI0AA3K7Cmx5Pnysnuc40NTcw-r89VAdroIhyr3HPt6oL884fBHGhA
+                      image_preview_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/1Q7tiWTv_nKRpHgsG1iATDVdp-eKIZuycQMKD9aIWXMNp96WNgI0AA3K7Cmx5Pnysnuc40NTcw-r89VAdroIhyr3HPt6oL884fBHGhA=s250
+                      image_thumbnail_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/1Q7tiWTv_nKRpHgsG1iATDVdp-eKIZuycQMKD9aIWXMNp96WNgI0AA3K7Cmx5Pnysnuc40NTcw-r89VAdroIhyr3HPt6oL884fBHGhA=s128
+                      image_original_url:
+                        type: string
+                        example: https://api.decentraland.org/v1/parcels/-14/-91/map.png?size=24&width=1024&height=1024
+                  opensea_link:
+                    type: string
+                    example: https://opensea.io/assets/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/115792089237316195423570985008687907848846313895668364014433714111300142890917
+                  external_link:
+                    type: string
+                    example: https://market.decentraland.org/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/115792089237316195423570985008687907848846313895668364014433714111300142890917
+                  token_metadata:
+                    type: string
+                    example: https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/115792089237316195423570985008687907848846313895668364014433714111300142890917
+                  predicted_price:
+                    type: integer
+                    example: 4182.756102772209
+                  eth_predicted_price:
+                    type: integer
+                    example: 2.115268278684138
+                  floor_adjusted_predicted_price:
+                    type: integer
+                    example: 2.115268278684138
+                  coords:
+                    type: object
+                    properties:
+                      x:
+                        type: integer
+                        example: -14
+                      y:
+                        type: integer
+                        example: -91
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: integer
+                          example: 1641616142000
+                        time:
+                          type: string
+                          example: 2022-01-08 04:29:02
+                        hash:
+                          type: string
+                          example: "0x7437ecf20cffbcd1a58575e5b3c4376914bb9a6075e9ad8920f8872e96922d9c"
+                        action:
+                          type: string
+                          example: Bought
+                        price:
+                          example: 0.25
+                        eth_price:
+                          example: 0.25  
+                        symbol:
+                          type: string
+                          example: ETH
+                        buyer:
+                          type: string
+                          example: 0x22742924e60a32736307138f6c4b79a11296932e
+                        market:
+                          type: string
+                          example: OpenSea
+                  variation_last_week:
+                    example: 0
+                  variation_last_four_weeks:
+                    example: 0
+                  variation_last_six_months:
+                    example: 0
+                  tile:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        example: 7
+                      top:
+                        type: integer
+                        example: 1
+                  owner:
+                    example: "0x9a6ebe7e2a7722f8200d0ffb63a1f6406a0d7dce"
+        '400':
           description: Land was not found
-  /decentraland/predictDetailed:
+  /test/decentraland/globalData:
     get:
       tags:
       - Decentraland
-      summary: Get land valuation and advanced details
-      operationId: decentralandPredictDetailed
-      description: Get land valuation and some advance details from Opensea using the land's tokenId or its x and y coordinates. Use it to get advance details of lands on your valuations.
-      produces:
-      - application/json
+      description: Get the global data of Sandbox lands collection            
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  one_hour_volume:
+                    type: integer
+                    example: 0
+                  one_hour_change:
+                    type: integer
+                    example: 0
+                  one_hour_sales:
+                    type: integer
+                    example: 0
+                  one_hour_sales_change:
+                    type: integer
+                    example: 0
+                  one_hour_average_price:
+                    type: integer
+                    example: 0
+                  one_hour_difference:
+                    type: integer
+                    example: 0
+                  six_hour_volume:
+                    type: integer
+                    example: 7.27
+                  six_hour_change:
+                    type: integer
+                    example: 0.2552229013432783
+                  six_hour_sales:
+                    type: integer
+                    example: 4
+                  six_hour_sales_change:
+                    type: integer
+                    example: 0
+                  six_hour_average_price:
+                    type: integer
+                    example: 1.8175
+                  six_hour_difference:
+                    type: integer
+                    example: 1.4781999999999993
+                  one_day_volume:
+                    type: integer
+                    example: 24.882800000000007
+                  one_day_change:
+                    type: integer
+                    example: -0.2589331983202785
+                  one_day_sales:
+                    type: integer
+                    example: 17
+                  one_day_sales_change:
+                    type: integer
+                    example: 0.21428571428571427
+                  one_day_average_price:
+                    type: integer
+                    example: 1.4636941176470593
+                  one_day_difference:
+                    type: integer
+                    example: -8.694199999999991
+                  seven_day_volume:
+                    type: integer
+                    example: 283.5078900000002
+                  seven_day_change:
+                    type: integer
+                    example: -0.09764799883751953
+                  seven_day_sales:
+                    type: integer
+                    example: 141
+                  seven_day_average_price:
+                    type: integer
+                    example: 2.0106942553191502
+                  seven_day_difference:
+                    type: integer
+                    example: -30.67979909999974
+                  thirty_day_volume:
+                    type: integer
+                    example: 1567.7507129232447
+                  thirty_day_change:
+                    type: integer
+                    example: -0.15426628920265065
+                  thirty_day_sales:
+                    type: integer
+                    example: 838
+                  thirty_day_average_price:
+                    type: integer
+                    example: 1.8708242397652084
+                  thirty_day_difference:
+                    type: integer
+                    example: -285.9659982684907
+                  total_volume:
+                    type: integer
+                    example: 159175.98232805321
+                  total_sales:
+                    type: integer
+                    example: 92808
+                  total_supply:
+                    type: integer
+                    example: 164188
+                  count:
+                    type: integer
+                    example: 164188
+                  num_owners:
+                    type: integer
+                    example: 22022
+                  average_price:
+                    type: integer
+                    example: 1.715110575899203
+                  num_reports:
+                    type: integer
+                    example: 5
+                  market_cap:
+                    type: integer
+                    example: 330131.86839234066
+                  floor_price:
+                    type: integer
+                    example: 1.3
+  /somnium-space/map:
+    get:
+      tags:
+      - Somniun Space
       parameters:
       - in: query
         name: tokenId
+        schema:
+          type: integer
+        required: false
         description: pass the land's tokenId for valuating your Land (optional)
+      - in: query
+        name: from
+        schema:
+          type: integer
         required: false
-        type: string
+        description: pass the initial token from a list, require size (optional)
       - in: query
-        name: x
-        description: x coordinate of the land, require the y parameter too (optional)
-        type: integer
-        minimum: -150
-        maximum: 150
+        name: size
+        schema:
+          type: integer
         required: false
+        description: "pass how many lands are going to be requested (Limits: 2000 when reduced is true, 5000 othercase) (optional)"
       - in: query
-        name: "y"
-        description: y coordinate of the land, require the x parameter too (optional)
-        type: integer
-        minimum: -150
-        maximum: 150
+        name: reduced
+        schema:
+          type: boolean
         required: false
+        description: if true give less information about each token (optional)
+      description: Get lands along their details and valuations        
       responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/decentraland-predict-detailed-result'
-        400:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+                    example: 500
+                  name:
+                    type: string
+                    example: Extra Large #500 (XL) parcel in Somnium Space
+                  images:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/Gc1ED0m-OBW9mkEIaKxLWGykAYgvyk7iCYVs5aWUxHDs8btv5ZnL35wz4s151f8t_SfbrEF7k-30x6EdBLL4ZG3S
+                      image_thumbnail_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/Gc1ED0m-OBW9mkEIaKxLWGykAYgvyk7iCYVs5aWUxHDs8btv5ZnL35wz4s151f8t_SfbrEF7k-30x6EdBLL4ZG3S=s128
+                      image_original_url:
+                        type: string
+                        example: https://somniumspace.com/images/opensea/Parcel_Image_500.png
+                      image_preview_url:
+                        type: string
+                        example: https://lh3.googleusercontent.com/Gc1ED0m-OBW9mkEIaKxLWGykAYgvyk7iCYVs5aWUxHDs8btv5ZnL35wz4s151f8t_SfbrEF7k-30x6EdBLL4ZG3S=s250"
+                  opensea_link:
+                    type: string
+                    example: https://opensea.io/assets/ethereum/0x913ae503153d9a335398d0785ba60a2d63ddb4e2/500
+                  external_link:
+                    type: string
+                    example: https://map.somniumspace.com/explorer/500
+                  token_metadata:
+                    type: string
+                    example: http://somniumspace.io/500
+                  predicted_price:
+                    type: integer
+                    example: 0.0013022888057683186
+                  eth_predicted_price:
+                    type: integer
+                    example: 3.0270093576364583
+                  floor_adjusted_predicted_price:
+                    type: integer
+                    example: 3.0270093576364583
+                  center:
+                    type: object
+                    properties:
+                      x:
+                        type: integer
+                        example: -0.16557142857142876,
+                      y:
+                        type: integer
+                        example: -0.135
+                  geometry:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        x:
+                          type: integer
+                          example: -0.16557142857142876,
+                        y:
+                          type: integer
+                          example: -0.135
+                  land_type:
+                    type: string
+                    example: Premium
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: integer
+                          example: 1641616142000
+                        time:
+                          type: string
+                          example: 2022-01-08 04:29:02
+                        hash:
+                          type: string
+                          example: 0x7437ecf20cffbcd1a58575e5b3c4376914bb9a6075e9ad8920f8872e96922d9c
+                        action:
+                          type: string
+                          example: Bought
+                        price:
+                          example: 0.25
+                        eth_price:
+                          example: 0.25  
+                        symbol:
+                          type: string
+                          example: ETH
+                        buyer:
+                          type: string
+                          example: 0x22742924e60a32736307138f6c4b79a11296932e
+                        market:
+                          type: string
+                          example: OpenSea
+                  variation_last_week:
+                    example: 0
+                  variation_last_four_weeks:
+                    example: 0
+                  variation_last_six_months:
+                    example: 0
+        '400':
           description: Land was not found
-  /sandbox/predictList:
+  /somnium-space/globalData:
     get:
       tags:
-      - Sandbox
-      summary: Get multiple land valuations
-      operationId: sandboxPredictList
-      description: Get multiple land valuations using the multiple land's tokenId. Use it to get valuations of multiple lands in one request.
-      produces:
-      - application/json
+      - Somniun Space
+      description: Get the global data of Sandbox lands collection            
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  one_hour_volume:
+                    type: integer
+                    example: 0
+                  one_hour_change:
+                    type: integer
+                    example: 0
+                  one_hour_sales:
+                    type: integer
+                    example: 0
+                  one_hour_sales_change:
+                    type: integer
+                    example: 0
+                  one_hour_average_price:
+                    type: integer
+                    example: 0
+                  one_hour_difference:
+                    type: integer
+                    example: 0
+                  six_hour_volume:
+                    type: integer
+                    example: 7.27
+                  six_hour_change:
+                    type: integer
+                    example: 0.2552229013432783
+                  six_hour_sales:
+                    type: integer
+                    example: 4
+                  six_hour_sales_change:
+                    type: integer
+                    example: 0
+                  six_hour_average_price:
+                    type: integer
+                    example: 1.8175
+                  six_hour_difference:
+                    type: integer
+                    example: 1.4781999999999993
+                  one_day_volume:
+                    type: integer
+                    example: 24.882800000000007
+                  one_day_change:
+                    type: integer
+                    example: -0.2589331983202785
+                  one_day_sales:
+                    type: integer
+                    example: 17
+                  one_day_sales_change:
+                    type: integer
+                    example: 0.21428571428571427
+                  one_day_average_price:
+                    type: integer
+                    example: 1.4636941176470593
+                  one_day_difference:
+                    type: integer
+                    example: -8.694199999999991
+                  seven_day_volume:
+                    type: integer
+                    example: 283.5078900000002
+                  seven_day_change:
+                    type: integer
+                    example: -0.09764799883751953
+                  seven_day_sales:
+                    type: integer
+                    example: 141
+                  seven_day_average_price:
+                    type: integer
+                    example: 2.0106942553191502
+                  seven_day_difference:
+                    type: integer
+                    example: -30.67979909999974
+                  thirty_day_volume:
+                    type: integer
+                    example: 1567.7507129232447
+                  thirty_day_change:
+                    type: integer
+                    example: -0.15426628920265065
+                  thirty_day_sales:
+                    type: integer
+                    example: 838
+                  thirty_day_average_price:
+                    type: integer
+                    example: 1.8708242397652084
+                  thirty_day_difference:
+                    type: integer
+                    example: -285.9659982684907
+                  total_volume:
+                    type: integer
+                    example: 159175.98232805321
+                  total_sales:
+                    type: integer
+                    example: 92808
+                  total_supply:
+                    type: integer
+                    example: 164188
+                  count:
+                    type: integer
+                    example: 164188
+                  num_owners:
+                    type: integer
+                    example: 22022
+                  average_price:
+                    type: integer
+                    example: 1.715110575899203
+                  num_reports:
+                    type: integer
+                    example: 5
+                  market_cap:
+                    type: integer
+                    example: 330131.86839234066
+                  floor_price:
+                    type: integer
+                    example: 1.3
+  /fluf/collection:
+    get:
+      tags:
+      - Fluf
       parameters:
       - in: query
         name: tokenId
-        description: pass the tokenId of lands
-        type: array
-        items:
-          type: string
-        style: form
-        explode: true
-        example: ["45", "58"]
+        schema:
+          type: integer
+        required: false
+        description: pass the land's tokenId for valuating your Land (optional)
+      - in: query
+        name: from
+        schema:
+          type: integer
+        required: false
+        description: pass the initial token from a list, require size (optional)
+      - in: query
+        name: size
+        schema:
+          type: integer
+        required: false
+        description: "pass how many lands are going to be requested (Limits: 2000 when reduced is true, 5000 othercase) (optional)"
+      - in: query
+        name: reduced
+        schema:
+          type: boolean
+        required: false
+        description: if true give less information about each token (optional)
+      description: Get lands along their details and valuations        
       responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/sandbox-predict-list-result'
-        400:
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+                    example: 100
+                  name:
+                    type: string
+                    example: null
+                  images:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: https://ipfs.io/ipfs/QmRPeYpnR43yccb9ZExQqgmVMwXnhW5yNJHxy2W9vH2RZM
+                      animation_url:
+                        type: string
+                        example: https://ipfs.io/ipfs/QmPhJ8uBUoyzmb7qDVP7gzrkNYCYuhb3XUqN5FnCHp7RYT
+                      image_small:
+                        type: string
+                        example: https://fluf-compressed.s3.eu-west-1.amazonaws.com/QmRPeYpnR43yccb9ZExQqgmVMwXnhW5yNJHxy2W9vH2RZM_432_432.png
+                      image_medium:
+                        type: string
+                        example: https://fluf-compressed.s3.eu-west-1.amazonaws.com/QmRPeYpnR43yccb9ZExQqgmVMwXnhW5yNJHxy2W9vH2RZM_864_864.png
+                      image_large:
+                        type: string
+                        example: https://fluf-compressed.s3.eu-west-1.amazonaws.com/QmRPeYpnR43yccb9ZExQqgmVMwXnhW5yNJHxy2W9vH2RZM_1296_1296.png
+                  predicted_price:
+                    type: integer
+                    example: 2.1985602407860347
+                  eth_predicted_price:
+                    type: integer
+                    example: 2.363476837696573
+                  floor_adjusted_predicted_price:
+                    type: integer
+                    example: 2.363476837696573
+                  traits:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        traitType:
+                          example: Sex
+                        value:
+                          example: Male
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: integer
+                          example: 1640739956000
+                        time:
+                          type: string
+                          example: 2021-12-29 01:05:56
+                        hash:
+                          type: string
+                          example: "0x59686d67317a7b29a5050bc09722a9636b1add68ca10e001d96affde0a99a34d"
+                        action:
+                          type: string
+                          example: Bought
+                        price:
+                          example: 1.8
+                        eth_price:
+                          example: 1.8  
+                        symbol:
+                          type: string
+                          example: ETH
+                        buyer:
+                          type: string
+                          example: "0xce2eefa06045900e6f8fb075e857d3b292cb616a"
+                        market:
+                          type: string
+                          example: OpenSea
+                  variation_last_week:
+                    example: 0
+                  variation_last_four_weeks:
+                    example: 0
+                  variation_last_six_months:
+                    example: 0
+        '400':
           description: Land was not found
-  /decentraland/predictList:
+  /fluf/globalData:
     get:
       tags:
-      - Decentraland
-      summary: Get multiple land valuations
-      operationId: decentralandPredictList
-      description: Get multiple land valuations using the multiple land's tokenId. Use it to get valuations of multiple lands in one request.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: tokenId
-        description: pass the tokenId of lands
-        type: array
-        items:
-          type: string
-        style: form
-        explode: true
-        example: ["45", "58"]
+      - Fluf
+      description: Get the global data of Sandbox lands collection            
       responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/decentraland-predict-list-result'
-        400:
-          description: Land was not found
-  /sandbox/predictListDetailed:
-    get:
-      tags:
-      - Sandbox
-      summary: Get multiple land valuations with their respective Opensea details
-      operationId: sandboxPredictListDetailed
-      description: Get multiple land valuations with their respective Opensea details using the multiple land's tokenId. Use it to get valuations of multiple lands in one request.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: tokenId
-        description: pass the tokenId of lands
-        type: array
-        items:
-          type: string
-        style: form
-        explode: true
-        example: ["45", "58"]
-      responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/sandbox-predict-list-detailed-result'
-        400:
-          description: Land was not found
-  /decentraland/predictListDetailed:
-    get:
-      tags:
-      - Decentraland
-      summary: Get multiple land valuations with their respective Opensea details
-      operationId: decentralandPredictListDetailed
-      description: Get multiple land valuations with their respective Opensea details using the multiple land's tokenId. Use it to get valuations of multiple lands in one request.
-      produces:
-      - application/json
-      parameters:
-      - in: query
-        name: tokenId
-        description: pass the tokenId of lands
-        type: array
-        items:
-          type: string
-        style: form
-        explode: true
-        example: ["45", "58"]
-      responses:
-        200:
-          description: Land valuation and advanced details from Opensea, obtained prices are in Ethereums. The valuation is the property "predicted_price" in "prices".
-          schema:
-            type: object
-            $ref: '#/definitions/decentraland-predict-list-detailed-result'
-        400:
-          description: Land was not found
-
-definitions:
-  sandbox-predict-result:
-    type: object
-    properties:
-      tokenId:
-        type: string
-        example: 29952
-      name:
-        type: string
-        example: LAND (-36, -131)
-      images:
-        type: object
-        properties:
-          image_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4
-          image_thumbnail_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4=s128
-          image_original_url:
-            type: string
-            example: https://api.sandbox.game/lands/8aaae204-fc4b-46fd-9a80-71a37cf6b9f9/preview-500px-x-500px.jpg
-          image_preview_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4=s250
-      opensea_link:
-        type: string
-        example: https://opensea.io/assets/0x50f5474724e0ee42d9a4e711ccfb275809fd6d4a/29952
-      external_link:
-        type: string
-        example: https://www.sandbox.game/en/lands/8aaae204-fc4b-46fd-9a80-71a37cf6b9f9/
-      token_metadata:
-        type: string
-        example: https://api.sandbox.game/lands/29952/metadata.json
-      coords:
-        type: object
-        properties:
-          x:
-            type: integer
-            example: -36
-          y:
-            type: integer
-            example: -131
-      prices:
-        type: object
-        properties:
-          predicted_price:
-            type: float
-            example: 4.642028616316737
-          history:
-            type: array
-            items:
-              type: object
-              properties:
-                timestamp:
-                  type: integer
-                  example: 1620809904000
-                time:
-                  type: string
-                  example: 2021-05-12 08:58:24
-                price:
-                  type: float
-                  example: 0.25
-          variation_last_week:
-            type: float
-            example: 0
-          variation_last_four_weeks:
-            type: float
-            example: 0
-          variation_last_six_months:
-            type: float
-            example: 3.429065743944637
-  decentraland-predict-result:
-    type: object
-    properties:
-      tokenId:
-        type: string
-        example: "34708801425935723273264209958040357568484"
-      name:
-        type: string
-        example: CCSnet
-      images:
-        type: object
-        properties:
-          image_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1
-          image_thumbnail_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1=s128
-          image_original_url:
-            type: string
-            example: https://api.decentraland.org/v2/parcels/101/-28/map.png?size=24&width=1024&height=1024
-          image_preview_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1=s250
-      opensea_link:
-        type: string
-        example: https://opensea.io/assets/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/34708801425935723273264209958040357568484
-      external_link:
-        type: string
-        example: https://market.decentraland.org/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/34708801425935723273264209958040357568484
-      token_metadata:
-        type: string
-        example: https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/34708801425935723273264209958040357568484
-      coords:
-        type: object
-        properties:
-          x:
-            type: integer
-            example: 101
-          y:
-            type: integer
-            example: -28
-      prices:
-        type: object
-        properties:
-          predicted_price:
-            type: float
-            example: 24086.137777924912
-          history:
-            type: array
-            items:
-              type: object
-              properties:
-                timestamp:
-                  type: integer
-                  example: 1602777146000
-                time:
-                  type: string
-                  example: 2020-10-15 15:52:26
-                price:
-                  type: float
-                  example: 7999
-          variation_last_week:
-            type: float
-            example: 0
-          variation_last_four_weeks:
-            type: float
-            example: 0
-          variation_last_six_months:
-            type: float
-            example: 0
-  sandbox-predict-detailed-result:
-    type: object
-    properties:
-      tokenId:
-        type: string
-        example: 29952
-      name:
-        type: string
-        example: LAND (-36, -131)
-      images:
-        type: object
-        properties:
-          image_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4
-          image_thumbnail_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4=s128
-          image_original_url:
-            type: string
-            example: https://api.sandbox.game/lands/8aaae204-fc4b-46fd-9a80-71a37cf6b9f9/preview-500px-x-500px.jpg
-          image_preview_url:
-            type: string
-            example: https://lh3.googleusercontent.com/39CflPIcMFPSC5l881sojMgZzdxAX9ItQLH7J7cTafYerxvWOwvT9Hd7FkVGpTv_75gZKl2h6pbOSuVAnoXSwY8O4QKtSA-dWix4=s250
-      opensea_link:
-        type: string
-        example: https://opensea.io/assets/0x50f5474724e0ee42d9a4e711ccfb275809fd6d4a/29952
-      external_link:
-        type: string
-        example: https://www.sandbox.game/en/lands/8aaae204-fc4b-46fd-9a80-71a37cf6b9f9/
-      token_metadata:
-        type: string
-        example: https://api.sandbox.game/lands/29952/metadata.json
-      coords:
-        type: object
-        properties:
-          x:
-            type: integer
-            example: -36
-          y:
-            type: integer
-            example: -131
-      prices:
-        type: object
-        properties:
-          predicted_price:
-            type: float
-            example: 4.642028616316737
-          history:
-            type: array
-            items:
-              type: object
-              properties:
-                timestamp:
-                  type: integer
-                  example: 1620809904000
-                time:
-                  type: string
-                  example: 2021-05-12 08:58:24
-                price:
-                  type: float
-                  example: 0.25
-          variation_last_week:
-            type: float
-            example: 0
-          variation_last_four_weeks:
-            type: float
-            example: 0
-          variation_last_six_months:
-            type: float
-            example: 3.429065743944637
-          current_price:
-            type: float
-            example: null
-          best_offered_price:
-            type: float
-            example: 2.73
-      last_transaction:
-        type: object
-        properties:
-          time:
-            type: string
-            example: 2021-11-12T02:54:51
-          price:
-            type: float
-            example: 1.28
-          symbol:
-            type: string
-            example: ETH
-          eth_price:
-            type: float
-            example: 1.28
-          buyer:
-            type: object
-            properties:
-              username:
-                type: string
-                example: Zac55555
-              address:
-                type: string
-                example: 0x920b613eaf0a53e746202584eda8173687c13653
-          seller:
-            type: object
-            properties:
-              username:
-                type: string
-                example: OpenSea-Orders
-              address:
-                type: string
-                example: 0x7be8076f4ea4a4ad08075c2508e481d6c946d12b
-          transaction_hash:
-            type: string
-            example: 0x5513c37caa611ef377ca04c39066fe13e60211292389b1a614cd0dede0d38e9a
-      placed_orders:
-        type: array
-        items:
-          type: object
-          properties:
-            created_date:
-              type: string
-              example: 2021-12-17T15:16:56.628773
-            closing_date:
-              type: string
-              example: 2021-12-17T19:16:47
-            order_hash:
-              type: string
-              example: 0x6878306e3ec5b900d61b4d9782d1482e0eb93d1d654323c5d49173edf93ad274
-            maker:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: null
-                address:
-                  type: string
-                  example: 0x97e31d52e25641840f1fce5ee4b6f1b267d7e80b
-            price:
-              type: float
-              example: 2.699
-            symbol:
-              type: string
-              example: WETH
-            eth_price:
-              type: float
-              example: 2699
-      stats:
-        type: object
-        properties:
-          one_day_volume:
-            type: float
-            example: 652.3747621914503
-          one_day_change:
-            type: float
-            example: -0.19069383664303305
-          one_day_sales:
-            type: integer
-            example: 178
-          one_day_average_price:
-            type: float
-            example: 3.6650267538845522
-          seven_day_volume:
-            type: float
-            example: 4765.146061642016
-          seven_day_change:
-            type: float
-            example: -0.08237853829538913
-          seven_day_sales:
-            type: integer
-            example: 1365
-          seven_day_average_price:
-            type: float
-            example: 3.490949495708437
-          thirty_day_volume:
-            type: float
-            example: 43211.23047180934
-          thirty_day_change:
-            type: float
-            example: 2.311799012622669
-          thirty_day_sales:
-            type: integer
-            example: 12937
-          thirty_day_average_price:
-            type: float
-            example: 3.340127577630775
-          total_volume:
-            type: float
-            example: 112004.4342335422
-          total_sales:
-            type: integer
-            example: 69389
-          total_supply:
-            type: integer
-            example: 103115
-          count:
-            type: integer
-            example: 103115
-          num_owners:
-            type: integer
-            example: 17278
-          average_price:
-            type: float
-            example: 1.614152592392774
-          num_reports:
-            type: integer
-            example: 7
-          market_cap:
-            type: float
-            example: 359969.25724997546
-          floor_price:
-            type: float
-            example: 0
-      manipulation_index:
-        type: float
-        example: 0
-      suggested_operation:
-        type: string
-        example: Make offer
-  decentraland-predict-detailed-result:
-    type: object
-    properties:
-      tokenId:
-        type: string
-        example: "34708801425935723273264209958040357568484"
-      name:
-        type: string
-        example: CCSnet
-      images:
-        type: object
-        properties:
-          image_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1
-          image_thumbnail_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1=s128
-          image_original_url:
-            type: string
-            example: https://api.decentraland.org/v2/parcels/101/-28/map.png?size=24&width=1024&height=1024
-          image_preview_url:
-            type: string
-            example: https://lh3.googleusercontent.com/vFbH3drfPaVAESk0a-OXdGSouJhzUEmIIjIwP6iDwdOomJHsKqljFpToUynDtoAUY6IXwraYj98jAiEY68r50TGnBJBAkbcm-Dr1=s250
-      opensea_link:
-        type: string
-        example: https://opensea.io/assets/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/34708801425935723273264209958040357568484
-      external_link:
-        type: string
-        example: https://market.decentraland.org/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/34708801425935723273264209958040357568484
-      token_metadata:
-        type: string
-        example: https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/34708801425935723273264209958040357568484
-      coords:
-        type: object
-        properties:
-          x:
-            type: integer
-            example: 101
-          y:
-            type: integer
-            example: -28
-      prices:
-        type: object
-        properties:
-          predicted_price:
-            type: float
-            example: 24086.137777924912
-          history:
-            type: array
-            items:
-              type: object
-              properties:
-                timestamp:
-                  type: integer
-                  example: 1602777146000
-                time:
-                  type: string
-                  example: 2020-10-15 15:52:26
-                price:
-                  type: float
-                  example: 7999
-          variation_last_week:
-            type: float
-            example: 0
-          variation_last_four_weeks:
-            type: float
-            example: 0
-          variation_last_six_months:
-            type: float
-            example: 0
-          current_price:
-            type: float
-            example: 9915.590685851083
-          best_offered_price:
-            type: float
-            example: 3714.3068683827337
-      last_transaction:
-        type: object
-        properties:
-          time:
-            type: string
-            example: 2020-11-12T21:10:12
-          price:
-            type: float
-            example: 7900
-          symbol:
-            type: string
-            example: MANA
-          eth_price:
-            type: float
-            example: 6.348598
-          mana_price:
-            type: float
-            example: 7900
-          buyer:
-            type: object
-            properties:
-              username:
-                type: string
-                example: 107C3
-              address:
-                type: string
-                example: 0xfdb4fdc4eb9f7158b9cae46f78357f3cbc8107c3
-          seller:
-            type: object
-            properties:
-              username:
-                type: string
-                example: null
-              address:
-                type: string
-                example: 0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539
-          transaction_hash:
-            type: string
-            example: 0xf535a5df6a9c119831e02d661e86fec11bd93761b35a81b8b076597ac536c802
-      placed_orders:
-        type: array
-        items:
-          type: object
-          properties:
-            created_date:
-              type: string
-              example: 2021-12-16T17:55:28.241476
-            closing_date:
-              type: string
-              example: 2021-12-18T17:55:25
-            order_hash:
-              type: string
-              example: 0x341298f3cdada10c683c644bf6ce72ebb0ba4c3e1761a765c74f354989dcc841
-            maker:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: null
-                address:
-                  type: string
-                  example: 0xa1ae49c05846175a1ccbad04a61b9aa1bad17b86
-            price:
-              type: float
-              example: 2.8381
-            symbol:
-              type: string
-              example: WETH
-            eth_price:
-              type: float
-              example: 2.8381
-            mana_price:
-              type: float
-              example: 3502.184160517288
-      stats:
-        type: object
-        properties:
-          one_day_volume:
-            type: float
-            example: 470.18192358000005
-          one_day_change:
-            type: float
-            example: 2.1447864771856002
-          one_day_sales:
-            type: integer
-            example: 48
-          one_day_average_price:
-            type: float
-            example: 9.795456741250002
-          seven_day_volume:
-            type: float
-            example: 1833.3053347999987
-          seven_day_change:
-            type: float
-            example: -0.3599011572858944
-          seven_day_sales:
-            type: integer
-            example: 343
-          seven_day_average_price:
-            type: float
-            example: 5.344913512536439
-          thirty_day_volume:
-            type: float
-            example: 10188.349489036758
-          thirty_day_change:
-            type: float
-            example: 1.0308694484339056
-          thirty_day_sales:
-            type: integer
-            example: 1681
-          thirty_day_average_price:
-            type: float
-            example: 6.060886073192599
-          total_volume:
-            type: float
-            example: 218602.18803781745
-          total_sales:
-            type: integer
-            example: 15660
-          total_supply:
-            type: integer
-            example: 97164
-          count:
-            type: integer
-            example: 97164
-          num_owners:
-            type: integer
-            example: 6029
-          average_price:
-            type: float
-            example: 13.959271266782723
-          num_reports:
-            type: integer
-            example: 6
-          market_cap:
-            type: float
-            example: 519333.1765320906
-          floor_price:
-            type: float
-            example: 0
-      manipulation_index:
-        type: float
-        example: 0.6666666666666666
-      suggested_operation:
-        type: string
-        example: Make offer
-  sandbox-predict-list-result:
-    type: object
-    properties:
-      "45":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "45"
-          predicted_price:
-            type: float
-            example: 3.980123346529414
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: -159
-              y:
-                type: integer
-                example: -204
-      "58":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "58"
-          predicted_price:
-            type: float
-            example: 3.8216717971202026
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: -146
-              y:
-                type: integer
-                example: -204
-  decentraland-predict-list-result:
-    type: object
-    properties:
-      "45":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "45"
-          predicted_price:
-            type: float
-            example: 9611.407849242982
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: 0
-              y:
-                type: integer
-                example: 45
-      "58":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "58"
-          predicted_price:
-            type: float
-            example: 12347.884236004958
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: 0
-              y:
-                type: integer
-                example: 58
-  sandbox-predict-list-detailed-result:
-    type: object
-    properties:
-      "45":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "45"
-          name:
-            type: string
-            example: LAND (-159, -204)
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: -159
-              y:
-                type: integer
-                example: -204
-          images:
-            type: object
-            properties:
-              image_url:
-                type: string
-                example: https://lh3.googleusercontent.com/Xv74CeD2yQ0AEPQ9EExQbVqArSO8QyokrW6kgquO8OyLfrZ8weW-cmIkiIhHFvLrKCGj_rCw1tovhr64HDnrYUtj8o9UqNcowj-uJNk
-              image_preview_url:
-                type: string
-                example: https://lh3.googleusercontent.com/Xv74CeD2yQ0AEPQ9EExQbVqArSO8QyokrW6kgquO8OyLfrZ8weW-cmIkiIhHFvLrKCGj_rCw1tovhr64HDnrYUtj8o9UqNcowj-uJNk=s250
-              image_thumbnail_url:
-                type: string
-                example: https://lh3.googleusercontent.com/Xv74CeD2yQ0AEPQ9EExQbVqArSO8QyokrW6kgquO8OyLfrZ8weW-cmIkiIhHFvLrKCGj_rCw1tovhr64HDnrYUtj8o9UqNcowj-uJNk=s128
-              image_original_url:
-                type: string
-                example: https://api.sandbox.game/lands/afc9cb8b-c281-46ad-b1ba-ebfd1cce3de0/preview-500px-x-500px.jpg
-          opensea_link:
-            type: string
-            example: https://opensea.io/assets/0x50f5474724e0ee42d9a4e711ccfb275809fd6d4a/45
-          external_link:
-            type: string
-            example: https://www.sandbox.game/en/lands/afc9cb8b-c281-46ad-b1ba-ebfd1cce3de0/
-          token_metadata:
-            type: string
-            example: https://api.sandbox.game/lands/45/metadata.json
-          prices:
-            type: object
-            properties:
-              current_price:
-                type: float
-                example: 7.6
-              predicted_price:
-                type: float
-                example: 3.4020109340565776
-              history:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    timestamp:
-                      type: integer
-                      example: 1620809904000
-                    time:
-                      type: string
-                      example: 2021-05-12 08:58:24
-                    price:
-                      type: float
-                      example: 0.25
-              variation_last_week:
-                type: float
-                example: 0
-              variation_last_four_weeks:
-                type: float
-                example: 0
-              variation_last_six_months:
-                type: float
-                example: 3.429065743944637
-          manipulation_index:
-            type: float
-            example: 0
-          suggested_operation:
-            type: string
-            example: Make offer
-      "58":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "58"
-          name:
-            type: string
-            example: LAND (-146, -204)
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: -146
-              y:
-                type: integer
-                example: -204
-          images:
-            type: object
-            properties:
-              image_url:
-                type: string
-                example: https://lh3.googleusercontent.com/gcqQYk6g7jokWIBcYtYgcyutcNXJUebJUF5id-1deFfJbKgWcMBjWkruIWXOJ6KSWLmGqm1db2qEgGMsVgLUvbOEoRGXJViuUspCww
-              image_preview_url:
-                type: string
-                example: https://lh3.googleusercontent.com/gcqQYk6g7jokWIBcYtYgcyutcNXJUebJUF5id-1deFfJbKgWcMBjWkruIWXOJ6KSWLmGqm1db2qEgGMsVgLUvbOEoRGXJViuUspCww=s250
-              image_thumbnail_url:
-                type: string
-                example: https://lh3.googleusercontent.com/gcqQYk6g7jokWIBcYtYgcyutcNXJUebJUF5id-1deFfJbKgWcMBjWkruIWXOJ6KSWLmGqm1db2qEgGMsVgLUvbOEoRGXJViuUspCww=s128
-              image_original_url:
-                type: string
-                example: https://api.sandbox.game/lands/863d27d5-1bec-4174-85a8-a11a024282b8/preview-500px-x-500px.jpg
-          opensea_link:
-            type: string
-            example: https://opensea.io/assets/0x50f5474724e0ee42d9a4e711ccfb275809fd6d4a/58
-          external_link:
-            type: string
-            example: https://www.sandbox.game/en/lands/863d27d5-1bec-4174-85a8-a11a024282b8/
-          token_metadata:
-            type: string
-            example: https://api.sandbox.game/lands/58/metadata.json
-          prices:
-            type: object
-            properties:
-              current_price:
-                type: float
-                example: null
-              predicted_price:
-                type: float
-                example: 3.5387055254395348
-              history:
-                type: array
-                example: []
-              variation_last_week:
-                type: float
-                example: 0
-              variation_last_four_weeks:
-                type: float
-                example: 0
-              variation_last_six_months:
-                type: float
-                example: 0
-          manipulation_index:
-            type: float
-            example: 0
-          suggested_operation:
-            type: string
-            example: Make offer
-  decentraland-predict-list-detailed-result:
-    type: object
-    properties:
-      "45":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "45"
-          name:
-            type: string
-            example: Parcel 0,45
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: 0
-              y:
-                type: integer
-                example: 45
-          images:
-            type: object
-            properties:
-              image_url:
-                type: string
-                example: https://lh3.googleusercontent.com/L6a852dmwAF9HlB1dlAc3kh9HgZb_fL38cb_kiYfx9i-8nqQXLNdHrXA6maKa0FQXHLeD7WO1vvV7GfNYLw5Jx7-gRMGzpj-A9erN7s
-              image_preview_url:
-                type: string
-                example: https://lh3.googleusercontent.com/L6a852dmwAF9HlB1dlAc3kh9HgZb_fL38cb_kiYfx9i-8nqQXLNdHrXA6maKa0FQXHLeD7WO1vvV7GfNYLw5Jx7-gRMGzpj-A9erN7s=s250
-              image_thumbnail_url:
-                type: string
-                example: https://lh3.googleusercontent.com/L6a852dmwAF9HlB1dlAc3kh9HgZb_fL38cb_kiYfx9i-8nqQXLNdHrXA6maKa0FQXHLeD7WO1vvV7GfNYLw5Jx7-gRMGzpj-A9erN7s=s128
-              image_original_url:
-                type: string
-                example: https://api.decentraland.org/v1/parcels/0/45/map.png?size=24&width=1024&height=1024
-          opensea_link:
-            type: string
-            example: https://opensea.io/assets/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/45
-          external_link:
-            type: string
-            example: https://market.decentraland.org/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/45
-          token_metadata:
-            type: string
-            example: https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/45
-          prices:
-            type: object
-            properties:
-              current_price:
-                type: float
-                example: null
-              predicted_price:
-                type: float
-                example: 9611.407849242982
-              history:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    timestamp:
-                      type: integer
-                      example: 1602777146000
-                    time:
-                      type: string
-                      example: 2020-10-15 15:52:26
-                    price:
-                      type: float
-                      example: 7999
-              variation_last_week:
-                type: float
-                example: 0
-              variation_last_four_weeks:
-                type: float
-                example: 0
-              variation_last_six_months:
-                type: float
-                example: 3.429065743944637
-          manipulation_index:
-            type: float
-            example: 0
-          suggested_operation:
-            type: string
-            example: Make offer
-      "58":
-        type: object
-        properties:
-          tokenId:
-            type: string
-            example: "58"
-          name:
-            type: string
-            example: Parcel 0,58
-          coords:
-            type: object
-            properties:
-              x:
-                type: integer
-                example: 0
-              y:
-                type: integer
-                example: 58
-          images:
-            type: object
-            properties:
-              image_url:
-                type: string
-                example: https://lh3.googleusercontent.com/lMnz7bfe2WxAPwMLHH6-Kd9J2hrl0-on_IbF_CRKbeaBwITqIshfQ1pJsmjRAZm2feyoH0MEEw3kg4bo-tXyXs-xsd__-EP5i3IkrQ
-              image_preview_url:
-                type: string
-                example: https://lh3.googleusercontent.com/lMnz7bfe2WxAPwMLHH6-Kd9J2hrl0-on_IbF_CRKbeaBwITqIshfQ1pJsmjRAZm2feyoH0MEEw3kg4bo-tXyXs-xsd__-EP5i3IkrQ=s250
-              image_thumbnail_url:
-                type: string
-                example: https://lh3.googleusercontent.com/lMnz7bfe2WxAPwMLHH6-Kd9J2hrl0-on_IbF_CRKbeaBwITqIshfQ1pJsmjRAZm2feyoH0MEEw3kg4bo-tXyXs-xsd__-EP5i3IkrQ=s128
-              image_original_url:
-                type: string
-                example: https://api.decentraland.org/v1/parcels/0/58/map.png?size=24&width=1024&height=1024
-          opensea_link:
-            type: string
-            example: https://opensea.io/assets/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/58
-          external_link:
-            type: string
-            example: https://market.decentraland.org/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/58
-          token_metadata:
-            type: string
-            example: https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/58
-          prices:
-            type: object
-            properties:
-              current_price:
-                type: float
-                example: null
-              predicted_price:
-                type: float
-                example: 12347.884236004958
-              history:
-                type: array
-                example: []
-              variation_last_week:
-                type: float
-                example: 0
-              variation_last_four_weeks:
-                type: float
-                example: 0
-              variation_last_six_months:
-                type: float
-                example: 0
-          manipulation_index:
-            type: float
-            example: 0
-          suggested_operation:
-            type: string
-            example: Make offer
-
-schemes:
-  - https
-host: services.itrmachines.com
+        '200':
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  one_hour_volume:
+                    type: integer
+                    example: 0
+                  one_hour_change:
+                    type: integer
+                    example: 0
+                  one_hour_sales:
+                    type: integer
+                    example: 0
+                  one_hour_sales_change:
+                    type: integer
+                    example: 0
+                  one_hour_average_price:
+                    type: integer
+                    example: 0
+                  one_hour_difference:
+                    type: integer
+                    example: 0
+                  six_hour_volume:
+                    type: integer
+                    example: 7.27
+                  six_hour_change:
+                    type: integer
+                    example: 0.2552229013432783
+                  six_hour_sales:
+                    type: integer
+                    example: 4
+                  six_hour_sales_change:
+                    type: integer
+                    example: 0
+                  six_hour_average_price:
+                    type: integer
+                    example: 1.8175
+                  six_hour_difference:
+                    type: integer
+                    example: 1.4781999999999993
+                  one_day_volume:
+                    type: integer
+                    example: 24.882800000000007
+                  one_day_change:
+                    type: integer
+                    example: -0.2589331983202785
+                  one_day_sales:
+                    type: integer
+                    example: 17
+                  one_day_sales_change:
+                    type: integer
+                    example: 0.21428571428571427
+                  one_day_average_price:
+                    type: integer
+                    example: 1.4636941176470593
+                  one_day_difference:
+                    type: integer
+                    example: -8.694199999999991
+                  seven_day_volume:
+                    type: integer
+                    example: 283.5078900000002
+                  seven_day_change:
+                    type: integer
+                    example: -0.09764799883751953
+                  seven_day_sales:
+                    type: integer
+                    example: 141
+                  seven_day_average_price:
+                    type: integer
+                    example: 2.0106942553191502
+                  seven_day_difference:
+                    type: integer
+                    example: -30.67979909999974
+                  thirty_day_volume:
+                    type: integer
+                    example: 1567.7507129232447
+                  thirty_day_change:
+                    type: integer
+                    example: -0.15426628920265065
+                  thirty_day_sales:
+                    type: integer
+                    example: 838
+                  thirty_day_average_price:
+                    type: integer
+                    example: 1.8708242397652084
+                  thirty_day_difference:
+                    type: integer
+                    example: -285.9659982684907
+                  total_volume:
+                    type: integer
+                    example: 159175.98232805321
+                  total_sales:
+                    type: integer
+                    example: 92808
+                  total_supply:
+                    type: integer
+                    example: 164188
+                  count:
+                    type: integer
+                    example: 164188
+                  num_owners:
+                    type: integer
+                    example: 22022
+                  average_price:
+                    type: integer
+                    example: 1.715110575899203
+                  num_reports:
+                    type: integer
+                    example: 5
+                  market_cap:
+                    type: integer
+                    example: 330131.86839234066
+                  floor_price:
+                    type: integer
+                    example: 1.3
